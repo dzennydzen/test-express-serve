@@ -36,8 +36,11 @@ function toShort(t) {
     };
 };
 
-
 app.get('/', (req, res) => {
+  res.send('🚀 Server is running. Try ?method=allTickets or ?method=ticketById&id=1');
+});
+
+app.get('/api', (req, res) => {
     const { method, id } = req.query;
     console.log('Request method from GET: ', method);
     console.log('Request URL from GET: ', req.url);
