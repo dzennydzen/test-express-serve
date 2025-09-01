@@ -22,8 +22,18 @@
     flex-direction: column;
 }
 
+
+/*СТИЛИ ТИКЕТА*/
 .ticket {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto;
     align-items: center;
     justify-content: space-between;
+    gap: 15px;
+    width: 100%;
+
+    border: 1px solid red;
 }
+
+
+

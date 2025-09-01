@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
+//создание объекта сервера и порта
 const app = express();
 const port = 7070;
 
@@ -11,22 +12,24 @@ app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-let tickets = [{
+let tickets = [
+{
   id: 1,
-  name: "Установить зойпер",
-  description: "Просьба установить зойпер, оператор 45, Резон",
+  name: "Заявка на помощь",
+  description: "ПОМОГИТЕ С 1С!!!",
   status: false,
   created: 1717076395871
 },
 {
   id: 2,
-  name: "Заявка на помощь",
-  description: "ПОМОГИТЕ С 1С!!!",
+  name: "Здравствуйте",
+  description: "у нас отвал, монитор не включается",
   status: false,
-  created: 1717076395871
+  created: 1717078395671
 }
 ];
 
+//функция укорачивания тикета для отображения в списке на фронте
 function toShort(t) {
     return {
         id: t.id,
@@ -36,10 +39,12 @@ function toShort(t) {
     };
 };
 
-app.get('/', (req, res) => {
+//заглушка для проверки жизнеспособности сервака
+app.get('/', (_, res) => {
   res.send('🚀 Server is running. Try ?method=allTickets or ?method=ticketById&id=1');
 });
 
+//обработчик GET-запросов, получение всего списка или одного конкретного тикета
 app.get('/api', (req, res) => {
     const { method, id } = req.query;
     console.log('Request method from GET: ', method);
@@ -70,6 +75,7 @@ app.get('/api', (req, res) => {
     };
 })
 
+//обработчик для POST-запроса, создание тикета
 app.post('/', (req, res) => {
     const { method } = req.query;
     console.log('Request method from POST: ', method);
@@ -77,7 +83,7 @@ app.post('/', (req, res) => {
     console.log('Full query from POST: ', req.query);
     console.log('Request body from POST: ', req.body);
 
-    if (method !== 'createTicket') res.status(400).json({ error: 'Unknown method' });
+    if (method !== 'createTicket') res.status(400).json({ error: 'Unknown request' });
 
     const { name, description, status } = req.body;
     const id = uuidv4();
@@ -91,6 +97,40 @@ app.post('/', (req, res) => {
     tickets.push(fullTicket);
 
     res.status(201).json(toShort(fullTicket))
+})
+
+//обработчик PATCH-запроса, редактирование тикета
+app.patch('/api', (req, res) => {
+    let { id, method } = req.query;
+
+    if (method !== 'editTicket') res.status(400).json({ error: 'Unknown request' });
+
+    id = +id;
+    const ticket = tickets.find(t => t.id === id);
+    if (!ticket) return res.status(400).json({ error: 'Ticket to delete is not found' });
+
+    for (const key in req.body) {
+        if (Object.prototype.hasOwnProperty.call(ticket, key)) {
+            ticket[key] = req.body[key];
+        }
+    }
+
+    res.status(200).json(ticket);
+})
+
+//обработчик DELETE-запроса, удаление тикета
+app.delete('/api', (req, res) => {
+    const { id, method } = req.query;
+
+    if (method !== 'deleteTicket') res.status(400).json({ error: 'Unknown request' });
+
+    const ticketId = +id;
+    const isTicketThere = tickets.some(t => t.id === ticketId);
+
+    if (!isTicketThere) return res.status(400).json({ error: 'Ticket not found' });
+    tickets = tickets.filter(t => t.id !== ticketId);
+
+    res.status(200).json({ message: `Ticket id ${ticketId} deleted successfully` })
 })
 
 

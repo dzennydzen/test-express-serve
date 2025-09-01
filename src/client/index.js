@@ -4,6 +4,11 @@ const ticketsContainer = document.querySelector('.tickets_container');
 
 async function fetchAllTickets() {
     const allTickets = await fetch('http://localhost:7070/api/?method=allTickets');
+    if (!allTickets) {
+        const errorData = await allTickets.json();
+        throw new Error(errorData.error || 'Ошибка при загрузке тикетов');
+    }
+
     return await allTickets.json();
 }
 
@@ -30,7 +35,7 @@ function renderTicket(ticket) {
     mainDiv.id = ticket.id;
 
     const innerTicketInfo = `
-        <input type="checkbox" class="done_checkbox" checked=${ticket.status}>
+        <input type="checkbox" class="done_checkbox" ${ticket.status ? 'checked' : ''}>
         <span class="ticket_desc">${ticket.name}</span>
         <span class="date_time">${formatDate(ticket.created)}</span>
         <div class="btns_block">
@@ -43,3 +48,19 @@ function renderTicket(ticket) {
     return mainDiv;
 }
 
+async function renderTickets() {
+    ticketsContainer.innerHTML = '';
+
+    try {
+        const ticketsList = await fetchAllTickets();
+        ticketsList.forEach(t => {
+            const ticketElem = renderTicket(t);
+            ticketsContainer.append(ticketElem);
+        })
+    } catch (err) {
+        console.error('Ошибка в работе renderTickets: ', err.message);
+        ticketsContainer.innerHTML = `<p style="color:red">${err.message}</p>`;
+    }
+}
+
+renderTickets()
