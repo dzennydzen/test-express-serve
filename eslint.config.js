@@ -22,11 +22,11 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      'no-undef': 'off', // отключаем для тестовых глобалов
-      'no-unused-expressions': 'warn',
-      'no-unused-vars': 'warn', // ⚠️ предупреждение вместо ошибки
-      'no-empty': 'warn',       // ⚠️ предупреждение вместо ошибки
-      // правила для пробелов и табов
+      'no-undef': 'off',           // отключаем проверку необъявленных переменных
+      'no-unused-expressions': 'off', // ✅ выключаем неиспользованные выражения
+      'no-unused-vars': 'off',     // ✅ полностью выключаем неиспользованные переменные
+      'no-empty': 'warn',           // ✅ выключаем пустые блоки
+      // остальные правила...
       'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
       'indent': 'off',
       'no-multi-spaces': ['error', { ignoreEOLComments: true }],

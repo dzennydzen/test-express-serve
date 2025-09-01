@@ -1,0 +1,29 @@
+* {
+    box-sizing: border-box;
+}
+
+.tickets_block, .tickets_block__title, .tickets_block__header, .add_ticket__btn, .tickets_container {
+    border: 1px solid black;
+}
+
+.tickets_block {
+    max-width: 50%;
+    margin: 0 auto;
+}
+
+.edit_ticket__btn, .del_ticket__btn {
+    border-radius: 50%;
+    width: 30px;   /* одинаковая ширина */
+    height: 30px;
+}
+
+.tickets_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
