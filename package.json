@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "start": "node src/api/server.js",
-    "dev": "webpack serve --mode development --hot",
+    "start": "webpack serve --mode development --hot",
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
     "serve": "pm2 start ./src/api/server.js --name helpdesk --watch",
