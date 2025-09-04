@@ -2,7 +2,8 @@ import './style/style.css';
 //тикеты 
 const ticketsContainer = document.querySelector('.tickets_container');
 //формы
-const addForm = document.querySelector('.add_form')
+const addForm = document.querySelector('.add_form');
+const editForm = document.querySelector('.edit_form');
 //кнопка создания тикета
 const addTicketBtn = document.querySelector('.add_ticket__btn');
 //модалки
@@ -10,8 +11,9 @@ const overlay = document.querySelector('.overlay');
 const addModal = document.querySelector('.add_modal');
 const editModal = document.querySelector('.edit_modal');
 const deleteModal = document.querySelector('.delete_modal');
-const modals = document.querySelectorAll('.modal')
+const modals = document.querySelectorAll('.modal');
 
+let tickets = [];
 
 async function fetchAllTickets() {
     const allTickets = await fetch('http://localhost:7070/api/?method=allTickets');
@@ -63,8 +65,7 @@ async function renderTickets() {
     ticketsContainer.innerHTML = '';
 
     try {
-        const ticketsList = await fetchAllTickets();
-        ticketsList.forEach(t => {
+        tickets.forEach(t => {
             const ticketElem = renderTicket(t);
             ticketsContainer.append(ticketElem);
         })
@@ -82,8 +83,18 @@ async function addTicket(shortVal, fullVal) {
     });
     const data = await response.json();
 
-    console.log(data);
-    console.log(response);
+    console.log('Ответ из addTicket: ', data);
+    console.log('Ответ целиком оттуда же: ', response);
+
+    if (!response.ok || data.error) {
+        throw new Error(data.error || 'Ошибка сервера')
+    }
+
+    const fullTicket = await fetchTicketById(data.id);
+    tickets.push(fullTicket)
+
+    alert(`Тикет id ${data.id.slice(0,8)} успешно создан!`);
+    return;
 }
 
 async function handleAddTicket(e) {
@@ -92,29 +103,47 @@ async function handleAddTicket(e) {
     const shortInputVal = e.currentTarget.elements.short_desc.value;
     const fullInputVal = e.currentTarget.elements.full_desc.value;
 
-    console.log(shortInputVal);
-    console.log(fullInputVal);
-
     if (!shortInputVal.trim()) {
         return;
     }
 
     try {
         const request = await addTicket(shortInputVal, fullInputVal);
-        closeModal(addModal)
+        console.log(request)
+        closeModal(addModal);
         renderTickets();
         return;
     } catch (e) {
+        closeModal(addModal)
         console.error('Ошибка при добавлении тикета: ', e.message);
         alert(e.message);
     }
 }
 
-function initApp() {
+async function handleEditTicket(e) {
+    e.preventDefault();
+    
+    const ticketId = e.currentTarget.dataset.id;
+    const savedTicket = tickets.find(t => t.id === ticketId)
+    const oldShortVal = savedTicket.name;
+    const oldFullVal = savedTicket.description;
+
+    const newShortVal = e.currentTarget.elements.short_desc.value;
+    const newFullVal = e.currentTarget.elements.full_desc.value;
+}
+
+async function editTicket(ticketId, updatedFields = {}) {
+
+}
+
+async function initApp() {
+    closeModal();
+    tickets = await fetchAllTickets();
     renderTickets();
 
     addTicketBtn.addEventListener('click', () => openModal(addModal));
     addForm.addEventListener('submit', handleAddTicket);
+    editForm.addEventListener('submit', handleEditTicket);
 
     ticketsContainer.addEventListener('click', (e) => {
         const ticket = e.target.closest('.ticket');
@@ -123,12 +152,13 @@ function initApp() {
         const ticketId = ticket.id;
 
         if (e.target.classList.contains('edit_ticket__btn')) {
-            // handleEditTicket(ticketId);
+            editForm.dataset.id = ticketId;
+            openModal(editModal);
         };
         if (e.target.classList.contains('del_ticket__btn')) {
-            // handleDeleteTicket(ticketId)
+
         }
-    })
+    });
 }
 
 function openModal(modal) {
@@ -138,7 +168,7 @@ function openModal(modal) {
     modal.classList.remove('hidden')
 }
 
-function closeModal(modalClass) {
+function closeModal() {
     overlay.classList.add('hidden');
     modals.forEach(m => m.classList.add('hidden'))
 }

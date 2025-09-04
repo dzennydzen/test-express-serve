@@ -37,7 +37,7 @@
 
 /*СТИЛИ ФОРМ И МОДАЛОК*/
 
-.add_form {
+.add_form, .edit_form {
     display: flex;
     flex-direction: column;
 }
