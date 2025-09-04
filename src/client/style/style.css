@@ -35,5 +35,47 @@
     border: 1px solid red;
 }
 
+/*СТИЛИ ФОРМ И МОДАЛОК*/
 
+.add_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal {
+    border: 1px solid black;
+
+    position: absolute;
+    top: 50%;         
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; 
+
+    min-width: 400px;
+    padding: 15px;
+
+    background-color: white;
+}
+
+.modal_btns {
+    display: flex;
+    justify-content: end;
+}
+
+/*ВУАЛЬ ДЛЯ МОДАЛОК*/
+
+.overlay {
+    position: fixed; /* ❗ Именно fixed, не absolute! */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный */
+    z-index: 999; /* Ниже модалки, но выше всего остального */
+}
+
+/*ДЛЯ СКРЫТИЯ ЭЛЕМЕНТОВ*/
+.hidden {
+    display: none;
+}
 

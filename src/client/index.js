@@ -1,6 +1,17 @@
 import './style/style.css';
-
+//тикеты 
 const ticketsContainer = document.querySelector('.tickets_container');
+//формы
+const addForm = document.querySelector('.add_form')
+//кнопка создания тикета
+const addTicketBtn = document.querySelector('.add_ticket__btn');
+//модалки
+const overlay = document.querySelector('.overlay');
+const addModal = document.querySelector('.add_modal');
+const editModal = document.querySelector('.edit_modal');
+const deleteModal = document.querySelector('.delete_modal');
+const modals = document.querySelectorAll('.modal')
+
 
 async function fetchAllTickets() {
     const allTickets = await fetch('http://localhost:7070/api/?method=allTickets');
@@ -63,4 +74,74 @@ async function renderTickets() {
     }
 }
 
-renderTickets()
+async function addTicket(shortVal, fullVal) {
+    const response = await fetch('http://localhost:7070/api?method=createTicket', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({name: shortVal, description: fullVal, status: false})
+    });
+    const data = await response.json();
+
+    console.log(data);
+    console.log(response);
+}
+
+async function handleAddTicket(e) {
+    e.preventDefault();
+    
+    const shortInputVal = e.currentTarget.elements.short_desc.value;
+    const fullInputVal = e.currentTarget.elements.full_desc.value;
+
+    console.log(shortInputVal);
+    console.log(fullInputVal);
+
+    if (!shortInputVal.trim()) {
+        return;
+    }
+
+    try {
+        const request = await addTicket(shortInputVal, fullInputVal);
+        closeModal(addModal)
+        renderTickets();
+        return;
+    } catch (e) {
+        console.error('Ошибка при добавлении тикета: ', e.message);
+        alert(e.message);
+    }
+}
+
+function initApp() {
+    renderTickets();
+
+    addTicketBtn.addEventListener('click', () => openModal(addModal));
+    addForm.addEventListener('submit', handleAddTicket);
+
+    ticketsContainer.addEventListener('click', (e) => {
+        const ticket = e.target.closest('.ticket');
+        if (!ticket) return;
+
+        const ticketId = ticket.id;
+
+        if (e.target.classList.contains('edit_ticket__btn')) {
+            // handleEditTicket(ticketId);
+        };
+        if (e.target.classList.contains('del_ticket__btn')) {
+            // handleDeleteTicket(ticketId)
+        }
+    })
+}
+
+function openModal(modal) {
+    if (!modal) return;
+
+    overlay.classList.remove('hidden');
+    modal.classList.remove('hidden')
+}
+
+function closeModal(modalClass) {
+    overlay.classList.add('hidden');
+    modals.forEach(m => m.classList.add('hidden'))
+}
+
+
+initApp();

@@ -23,9 +23,31 @@
             </div> -->
         </div>
     </section>
-    <div class="modal delete_modal"></div>
-    <div class="modal edit_modal"></div>
-    <div class="modal add_modal"></div>
+    <div class="overlay hidden">
+        <section class="modal delete_modal hidden">
+
+        </section>
+
+        <section class="modal edit_modal hidden">
+
+        </section>
+
+        <section class="modal add_modal hidden">
+            <h1 class="modal_title add_modal__title">Добавить тикет</h1>
+            <form action="" class="add_form">
+                <label for="short_desc">Краткое описание</label>
+                <input type="text" name="short_desc" required>
+
+                <label for="full_desc">Подробное описание</label>
+                <textarea name="full_desc"></textarea>
+
+                <div class="modal_btns">
+                    <button type="button" class="btn cancel_modal__btn">Отменить</button>
+                    <button type="submit" class="btn send_modal__btn">Создать</button>
+                </div>
+            </form>
+        </section>
+    </div>
 </body>
 </html>
 
