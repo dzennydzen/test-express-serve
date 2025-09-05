@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .tickets_block, .tickets_block__title, .tickets_block__header, .add_ticket__btn, .tickets_container {
@@ -40,6 +41,14 @@
 .add_form, .edit_form {
     display: flex;
     flex-direction: column;
+}
+
+textarea {
+    margin-top: 5px;
+}
+
+input {
+   margin: 10px 0; 
 }
 
 .modal {

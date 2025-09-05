@@ -42,6 +42,15 @@ function formatDate(timestamp) {
     return date.toLocaleString('ru-RU', options).replace(',', '');
 }
 
+function toShort(t) {
+    return {
+        id: t.id,
+        name: t.name,
+        status: t.status,
+        created: t.created
+    };
+};
+
 function renderTicket(ticket) {
     const mainDiv = document.createElement('div');
     mainDiv.className = 'ticket';
@@ -128,12 +137,55 @@ async function handleEditTicket(e) {
     const oldShortVal = savedTicket.name;
     const oldFullVal = savedTicket.description;
 
-    const newShortVal = e.currentTarget.elements.short_desc.value;
-    const newFullVal = e.currentTarget.elements.full_desc.value;
+    const newShortVal = e.currentTarget.elements.short_desc.value === oldShortVal 
+    ? null 
+    : e.currentTarget.elements.short_desc.value;
+
+    const newFullVal = e.currentTarget.elements.full_desc.value === oldFullVal
+    ? null
+    : e.currentTarget.elements.full_desc.value;
+
+    const valuePairs = [['name', newShortVal], ['description', newFullVal]];
+    const updatedFields = valuePairs.reduce((finalObj, pair) => {
+        if (pair[1] !== null) {
+          finalObj[pair[0]] = pair[1].trim();
+        }
+        return finalObj;
+    }, {});
+
+    try {
+        const request = await editTicket(ticketId, updatedFields);
+        console.log(request);
+        renderTickets();
+        return;
+    } catch (e) {
+        console.error('Ошибка при изменении тикета: ', e.message);
+        alert(e.message);
+    } finally {
+        closeModal(editModal);
+    }
 }
 
-async function editTicket(ticketId, updatedFields = {}) {
+async function editTicket(ticketId, updatedFields) {
+    const response = await fetch(`http://localhost:7070/api?method=editTicket&id=${ticketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFields)
+    })
 
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+        throw new Error(data.error || 'Ошибка сервера')
+    }
+
+    const index = tickets.findIndex(t => t.id === ticketId);
+    if (index >= 0) {
+        tickets[index] = {...toShort(data)};
+    }
+
+    alert(`Тикет id ${data.id.slice(0,8)} успешно отредактирован!`);
+    return;
 }
 
 async function initApp() {
@@ -145,14 +197,19 @@ async function initApp() {
     addForm.addEventListener('submit', handleAddTicket);
     editForm.addEventListener('submit', handleEditTicket);
 
-    ticketsContainer.addEventListener('click', (e) => {
+    ticketsContainer.addEventListener('click', async (e) => {
         const ticket = e.target.closest('.ticket');
         if (!ticket) return;
 
         const ticketId = ticket.id;
+        const ticketObj = tickets.find(t => t.id === ticketId)
 
         if (e.target.classList.contains('edit_ticket__btn')) {
             editForm.dataset.id = ticketId;
+            editForm.elements.short_desc.value = ticketObj.name;
+            const fetchedTicket = await fetchTicketById(ticketId);
+            editForm.elements.full_desc.value = fetchedTicket.description;
+
             openModal(editModal);
         };
         if (e.target.classList.contains('del_ticket__btn')) {

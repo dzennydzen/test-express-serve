@@ -107,7 +107,6 @@ app.patch('/api', (req, res) => {
     let { id, method } = req.query;
 
     if (method !== 'editTicket') res.status(400).json({ error: 'Unknown request' });
-
     
     const ticket = tickets.find(t => t.id === id);
     if (!ticket) return res.status(400).json({ error: 'Ticket to delete is not found' });
