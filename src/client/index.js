@@ -4,8 +4,10 @@ const ticketsContainer = document.querySelector('.tickets_container');
 //формы
 const addForm = document.querySelector('.add_form');
 const editForm = document.querySelector('.edit_form');
-//кнопка создания тикета
+const delForm = document.querySelector('.delete_form');
+//кнопки
 const addTicketBtn = document.querySelector('.add_ticket__btn');
+const cancelBtns = document.querySelectorAll('.cancel_modal__btn');
 //модалки
 const overlay = document.querySelector('.overlay');
 const addModal = document.querySelector('.add_modal');
@@ -57,12 +59,17 @@ function renderTicket(ticket) {
     mainDiv.id = ticket.id;
 
     const innerTicketInfo = `
+        <div class='ticket_main_info'>
         <input type="checkbox" class="done_checkbox" ${ticket.status ? 'checked' : ''}>
-        <span class="ticket_desc">${ticket.name}</span>
+        <span class="ticket_name">${ticket.name}</span>
         <span class="date_time">${formatDate(ticket.created)}</span>
         <div class="btns_block">
             <button class="edit_ticket__btn">✎</button>
             <button class="del_ticket__btn">X</button>
+        </div>
+        </div>
+        <div class="ticket_description hidden">
+            aboba
         </div>
     `;
 
@@ -77,6 +84,14 @@ async function renderTickets() {
         tickets.forEach(t => {
             const ticketElem = renderTicket(t);
             ticketsContainer.append(ticketElem);
+
+            const ticketName = ticketElem.querySelector('.ticket_name');
+            const nameRect = ticketName.getBoundingClientRect();
+            const parentRect = ticketElem.getBoundingClientRect();
+            const offsetLeft = nameRect.left - parentRect.left;
+
+            const ticketDesc = ticketElem.querySelector('.ticket_description');
+            ticketDesc.style.marginLeft = `${offsetLeft}px`;
         })
     } catch (err) {
         console.error('Ошибка в работе renderTickets: ', err.message);
@@ -166,7 +181,7 @@ async function handleEditTicket(e) {
     }
 }
 
-async function editTicket(ticketId, updatedFields) {
+async function editTicket(ticketId, updatedFields, showAlert = true) {
     const response = await fetch(`http://localhost:7070/api?method=editTicket&id=${ticketId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -184,9 +199,45 @@ async function editTicket(ticketId, updatedFields) {
         tickets[index] = {...toShort(data)};
     }
 
-    alert(`Тикет id ${data.id.slice(0,8)} успешно отредактирован!`);
+    if (showAlert) {
+        alert(`Тикет id ${data.id.slice(0,8)} успешно отредактирован!`);
+    }
+
     return;
 }
+
+async function handleDeleteTicket(e) {
+    e.preventDefault();
+
+    const ticketId = delForm.dataset.id;
+
+    try {
+       await deleteTicket(ticketId);
+       renderTickets(); 
+    } catch (e) {
+        console.error('Ошибка при удалении тикета: ', e.message);
+        alert(e.message);
+    } finally {
+        closeModal(deleteModal);
+    }
+}
+
+async function deleteTicket(ticketId) {
+    const response = await fetch(`http://localhost:7070/api?method=deleteTicket&id=${ticketId}`, {
+        method: 'DELETE'
+    });
+
+    const data = await response.json();
+    console.log(data)
+
+    if (!response.ok || data.error) {
+        throw new Error(data.error || 'Ошибка сервера')
+    };
+
+    tickets = tickets.filter(t => t.id !== ticketId);
+    alert(`Тикет id ${ticketId.slice(0,8)} успешно удален!`);
+    return;
+} 
 
 async function initApp() {
     closeModal();
@@ -196,6 +247,7 @@ async function initApp() {
     addTicketBtn.addEventListener('click', () => openModal(addModal));
     addForm.addEventListener('submit', handleAddTicket);
     editForm.addEventListener('submit', handleEditTicket);
+    delForm.addEventListener('submit', handleDeleteTicket);
 
     ticketsContainer.addEventListener('click', async (e) => {
         const ticket = e.target.closest('.ticket');
@@ -213,9 +265,35 @@ async function initApp() {
             openModal(editModal);
         };
         if (e.target.classList.contains('del_ticket__btn')) {
+            delForm.dataset.id = ticketId;
+            openModal(deleteModal);
+        };
+        if (!e.target.closest('.edit_ticket__btn') && !e.target.closest('.del_ticket__btn') && !e.target.classList.contains('done_checkbox')) {
+            const fetchedDesc = await loadTicketDesc(ticket.id);
+            showTicketDesc(ticket, fetchedDesc)
+        };
+        if (e.target.classList.contains('done_checkbox')) {
+            e.target.addEventListener('change', async (e) => {
+                const changedTicket = tickets.find(t => t.id === ticketId);
+                changedTicket.status = e.target.checked;
 
+                await editTicket(ticketId, { status: e.target.checked }, false)
+            })
         }
     });
+
+    cancelBtns.forEach(btn => btn.addEventListener('click', () => closeModal()));
+}
+
+async function loadTicketDesc(ticketId) {
+    const response = await fetchTicketById(ticketId);
+    return response.description;
+}
+
+async function showTicketDesc(ticketElem, description) {
+    const descBlock = ticketElem.querySelector('.ticket_description');
+    descBlock.innerText = description;
+    descBlock.classList.toggle('hidden')
 }
 
 function openModal(modal) {
@@ -232,3 +310,4 @@ function closeModal() {
 
 
 initApp();
+

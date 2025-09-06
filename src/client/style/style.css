@@ -26,14 +26,24 @@
 
 /*СТИЛИ ТИКЕТА*/
 .ticket {
+    border: 1px solid red;
+
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.ticket_main_info {
     display: grid;
     grid-template-columns: auto 1fr 1fr auto;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
     width: 100%;
+}
 
-    border: 1px solid red;
+.ticket_description {
+    padding: 10px 0;
 }
 
 /*СТИЛИ ФОРМ И МОДАЛОК*/
