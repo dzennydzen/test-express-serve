@@ -3,7 +3,7 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.tickets_block, .tickets_block__title, .tickets_block__header, .add_ticket__btn, .tickets_container {
+.tickets_block, .ticket {
     border: 1px solid black;
 }
 
@@ -26,8 +26,6 @@
 
 /*СТИЛИ ТИКЕТА*/
 .ticket {
-    border: 1px solid red;
-
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -84,17 +82,21 @@ input {
 /*ВУАЛЬ ДЛЯ МОДАЛОК*/
 
 .overlay {
-    position: fixed; /* ❗ Именно fixed, не absolute! */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный */
-    z-index: 999; /* Ниже модалки, но выше всего остального */
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }
 
-/*ДЛЯ СКРЫТИЯ ЭЛЕМЕНТОВ*/
+/*КЛАССЫ ДЛЯ СТИЛИЗАЦИИ ЭЛЕМЕНТОВ*/
+
 .hidden {
     display: none;
 }
 
+.crossed {
+    text-decoration: line-through;
+}

@@ -137,7 +137,6 @@ app.delete('/api', (req, res) => {
     res.status(200).json({ message: `Ticket id ${ticketId} deleted successfully` })
 })
 
-
 app.listen(port, () => {
     console.log(`My express server is listening on ${port}`)
 })

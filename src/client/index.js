@@ -239,6 +239,21 @@ async function deleteTicket(ticketId) {
     return;
 } 
 
+async function handleToggleStatus(e) {
+    const ticketId = e.target.closest('.ticket').id;
+    const changedTicket = tickets.find(t => t.id === ticketId);
+    changedTicket.status = e.target.checked;
+
+    const ticketDesc = e.target.nextElementSibling;
+    if (changedTicket.status) {
+        ticketDesc.classList.add('crossed');
+    } else {
+        ticketDesc.classList.remove('crossed');
+    }
+
+    await editTicket(ticketId, { status: e.target.checked }, false);
+}
+
 async function initApp() {
     closeModal();
     tickets = await fetchAllTickets();
@@ -273,17 +288,13 @@ async function initApp() {
             showTicketDesc(ticket, fetchedDesc)
         };
         if (e.target.classList.contains('done_checkbox')) {
-            e.target.addEventListener('change', async (e) => {
-                const changedTicket = tickets.find(t => t.id === ticketId);
-                changedTicket.status = e.target.checked;
-
-                await editTicket(ticketId, { status: e.target.checked }, false)
-            })
+            e.target.addEventListener('change', handleToggleStatus)
         }
     });
 
     cancelBtns.forEach(btn => btn.addEventListener('click', () => closeModal()));
 }
+
 
 async function loadTicketDesc(ticketId) {
     const response = await fetchTicketById(ticketId);
