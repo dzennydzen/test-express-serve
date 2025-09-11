@@ -1,4 +1,6 @@
 import './style/style.css';
+import editIcon from './assets/free-icon-edit-button-5251816.png'
+import delIcon from './assets/free-icon-delete-button-5974771.png'
 //тикеты 
 const ticketsContainer = document.querySelector('.tickets_container');
 //формы
@@ -64,8 +66,12 @@ function renderTicket(ticket) {
         <span class="ticket_name">${ticket.name}</span>
         <span class="date_time">${formatDate(ticket.created)}</span>
         <div class="btns_block">
-            <button class="edit_ticket__btn">✎</button>
-            <button class="del_ticket__btn">X</button>
+            <button class="edit_ticket__btn">
+                <img class="btn__img edit_img" src="${editIcon}" alt="Редактировать">
+            </button>
+            <button class="del_ticket__btn">
+                <img class="btn__img del_img" src="${delIcon}" alt="Удалить">
+            </button>
         </div>
         </div>
         <div class="ticket_description hidden">
