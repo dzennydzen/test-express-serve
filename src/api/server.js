@@ -7,11 +7,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 //создание объекта сервера и порта
 const app = express();
-const port = 7070;
+const PORT = process.env.PORT || 7070;
 
 app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(process.cwd(), 'dist')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+});
 
 //хранение тикетов
 const ticketsFilePath = path.resolve('./src/api/tickets.json');
@@ -137,8 +142,8 @@ app.delete('/api', (req, res) => {
     res.status(200).json({ message: `Ticket id ${ticketId} deleted successfully` })
 })
 
-app.listen(port, () => {
-    console.log(`My express server is listening on ${port}`)
+app.listen(PORT, () => {
+    console.log(`My express server is listening on ${PORT}`)
 })
 
 export default app;
