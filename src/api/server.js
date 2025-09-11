@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 const app = express();
 const PORT = process.env.PORT || 7070;
 
-app.use(cors({ origin: 'http://localhost:8080' }));
+app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -17,10 +17,12 @@ const editModal = document.querySelector('.edit_modal');
 const deleteModal = document.querySelector('.delete_modal');
 const modals = document.querySelectorAll('.modal');
 
+const API_BASE = window.location.origin;
+
 let tickets = [];
 
 async function fetchAllTickets() {
-    const allTickets = await fetch('http://localhost:7070/api/?method=allTickets');
+    const allTickets = await fetch(`${API_BASE}/api/?method=allTickets`);
     if (!allTickets) {
         const errorData = await allTickets.json();
         throw new Error(errorData.error || 'Ошибка при загрузке тикетов');
@@ -30,7 +32,7 @@ async function fetchAllTickets() {
 }
 
 async function fetchTicketById(id) {
-    const ticket = await fetch(`http://localhost:7070/api/?method=ticketById&id=${id}`);
+    const ticket = await fetch(`${API_BASE}/api/?method=ticketById&id=${id}`);
     return await ticket.json();
 }
 
@@ -106,7 +108,7 @@ async function renderTickets() {
 }
 
 async function addTicket(shortVal, fullVal) {
-    const response = await fetch('http://localhost:7070/api?method=createTicket', {
+    const response = await fetch(`${API_BASE}/api?method=createTicket`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({name: shortVal, description: fullVal, status: false})
@@ -188,7 +190,7 @@ async function handleEditTicket(e) {
 }
 
 async function editTicket(ticketId, updatedFields, showAlert = true) {
-    const response = await fetch(`http://localhost:7070/api?method=editTicket&id=${ticketId}`, {
+    const response = await fetch(`${API_BASE}/api?method=editTicket&id=${ticketId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedFields)
@@ -229,7 +231,7 @@ async function handleDeleteTicket(e) {
 }
 
 async function deleteTicket(ticketId) {
-    const response = await fetch(`http://localhost:7070/api?method=deleteTicket&id=${ticketId}`, {
+    const response = await fetch(`${API_BASE}/api?method=deleteTicket&id=${ticketId}`, {
         method: 'DELETE'
     });
 
