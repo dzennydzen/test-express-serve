@@ -1,13 +1,33 @@
 * {
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
+body {
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(180deg, #f9fafb, #dbeafe);
+    color: #222;
+}
+
+/*БЛОК ТИКЕТОВ*/
+
 .tickets_block {
-    border: 1px solid black;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
 
-    background-color: #e9cece;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tickets_block__title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
 }
 
 .tickets_block {
@@ -19,6 +39,7 @@
 .tickets_container {
     display: flex;
     flex-direction: column;
+    gap: 12px;
 }
 
 /*СТИЛИ ТИКЕТА*/
@@ -26,7 +47,18 @@
 .ticket {
     display: flex;
     flex-direction: column;
-    align-items: start;
+    gap: 6px;
+    padding: 12px 16px;
+
+    border-radius: 8px;
+    background: #f9fafb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease;
+}
+
+.ticket:hover {
+    transform: translateY(-2px);
+    box-shadow: 3px 6px 5px rgba(0, 0, 0, 0.08);
 }
 
 .ticket_main_info {
@@ -39,45 +71,59 @@
 }
 
 .ticket_description {
-    padding: 10px 0;
-    font-style: oblique;
     font-size: 14px;
+    font-style: italic;
+    color: #444;
 }
+
 
 /*КНОПКИ*/
 
 .add_ticket__btn {
-    background-color: gold;
-    border-radius: 5px;
-    border: 1px solid black;
-    padding: 5px;
+    background-color: #facc15;
+    border-radius: 6px;
+    border: none;
+    padding: 8px 14px;
     margin: 10px 0;
 
-    font-weight: bold;
-    transition: background 0.3s;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease;
 }
 
 .add_ticket__btn:hover {
-    background-color: #db5d47;
-    color: white;
+    background-color: #eab308;
+    color: #111;
+    transform: translateY(-1px);
+
+    box-shadow: 3px 6px 5px rgba(0, 0, 0, 0.08);
 }
 
 .btns_block {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
 }
 
-.edit_ticket__btn, .del_ticket__btn {
+.edit_ticket__btn, 
+.del_ticket__btn {
     border: none;
     border-radius: 50%;
-
     width: 32px;  
     height: 32px;
-    padding: 0;
-    background: transparent;
+    background: #f3f4f6;
     cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.edit_ticket__btn:hover {
+    background: #6694df;
+    color: #fff;
+}
+
+.del_ticket__btn:hover {
+    background: #f0a9a9;
+    color: #fff;
 }
 
 .btn__img {
@@ -88,51 +134,106 @@
 
 /*СТИЛИ ФОРМ И МОДАЛОК*/
 
-.add_form, .edit_form {
+.add_form, 
+.edit_form {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+input, textarea {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus, 
+textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
 }
 
 textarea {
-    margin-top: 5px;
     resize: none;
-}
-
-input {
-   margin: 10px 0; 
+    min-height: 80px;
 }
 
 .modal {
-    border: 1px solid black;
-
     position: absolute;
     top: 50%;         
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000; 
 
-    min-width: 400px;
-    padding: 15px;
+    min-width: 380px;
+    padding: 20px;
 
-    background-color: white;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal_title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
 
 .modal_btns {
     display: flex;
-    justify-content: end;
-    gap: 5px;
-    margin-top: 5px;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
 }
+
+.modal_btns .btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.send_modal__btn {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.send_modal__btn:hover {
+    background: #2563eb;
+}
+
+.cancel_modal__btn {
+    background: #e5e7eb;
+    color: #111;
+}
+
+.cancel_modal__btn:hover {
+    background: #d1d5db;
+}
+
+.del_modal__btn {
+    background: #ef4444;
+    color: #fff;
+}
+
+.del_modal__btn:hover {
+    background: #dc2626;
+}
+
 /*ВУАЛЬ ДЛЯ МОДАЛОК*/
 
 .overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
+
+    backdrop-filter: blur(10px);
 }
 
 /*КЛАССЫ ДЛЯ СТИЛИЗАЦИИ ЭЛЕМЕНТОВ*/
@@ -143,4 +244,17 @@ input {
 
 .crossed {
     text-decoration: line-through;
+}
+
+/*АНИМАЦИИ*/
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }

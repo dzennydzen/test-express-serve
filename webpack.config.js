@@ -49,6 +49,13 @@ export default {
     })
   ],
   devServer: {
+    proxy: [
+    {
+      context: ['/api'], // какие запросы проксировать
+      target: 'http://localhost:7070', // куда прокидывать
+      changeOrigin: true,
+    },
+    ],
     static: {
       directory: path.join(__dirname, 'dist'), // Откуда раздавать файлы
     },
